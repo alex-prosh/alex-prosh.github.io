@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photography & Perspective</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .single {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .image-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #555;
+            font-weight: 400;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .caption {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../" class="back-link">← Back</a>
+            <h1>Photography & Perspective</h1>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2>Part 1: Selfie Comparison</h2>
+                <div class="comparison">
+                    <div class="image-item">
+                        <h3>Close-up</h3>
+                        <img src="media/part 1/close_up.png" alt="Close-up selfie">
+                        <p class="caption">Distorted perspective from close distance</p>
+                    </div>
+                    
+                    <div class="image-item">
+                        <h3>Distant + Zoom</h3>
+                        <img src="media/part 1/far_away.png" alt="Distant portrait">
+                        <p class="caption">Natural proportions from distance with zoom</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Part 2: Architectural Perspective</h2>
+                <div class="comparison">
+                    <div class="image-item">
+                        <h3>Telephoto (Compressed)</h3>
+                        <img src="media/part 2/far_hall.png" alt="Telephoto shot">
+                        <p class="caption">Compressed depth from telephoto lens</p>
+                    </div>
+                    
+                    <div class="image-item">
+                        <h3>Wide Angle (Natural)</h3>
+                        <img src="media/part 2/close_hall.png" alt="Wide angle shot">
+                        <p class="caption">Natural depth perception</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Part 3: Dolly Zoom Effect</h2>
+                <div class="single">
+                    <div class="image-item">
+                        <img src="media/part 3/ezgif.com-speed.gif" alt="Dolly zoom animation">
+                        <p class="caption">The classic "Vertigo" effect in motion</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
