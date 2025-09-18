@@ -3,62 +3,492 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project 2 - Your Portfolio</title>
+    <title>CS180 Project 1: Colorizing the Prokudin-Gorskii Collection</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
         }
-        .gallery {
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+        }
+
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2rem;
+            font-weight: 400;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .header .course {
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+            color: #34495e;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .result-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .result-item h4 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .result-item img {
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .offset-info {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #666;
+            background: #f1f1f1;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .placeholder {
+            background: #e9ecef;
+            border: 2px dashed #adb5bd;
+            border-radius: 6px;
+            padding: 40px 20px;
+            text-align: center;
+            color: #6c757d;
+            margin: 15px 0;
+        }
+
+        .placeholder.small {
+            padding: 20px;
+            margin: 10px 0;
+        }
+
+        .bells-whistles {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+
+        .bells-whistles h3 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
             margin: 20px 0;
         }
-        .gallery img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+        .comparison-item {
+            text-align: center;
         }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #007acc;
-            text-decoration: none;
+
+        .comparison-item h5 {
+            margin: 0 0 10px 0;
+            color: #495057;
         }
-        .back-link:hover {
-            text-decoration: underline;
+
+        .code-snippet {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .before-after {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <a href="../" class="back-link">← Back to Portfolio</a>
-    
-    <h1>Project 2</h1>
-    <p>Project description goes here. Replace this with details about your project.</p>
-    
-    <h2>Gallery</h2>
-    <div class="gallery">
-        <!-- Images from media/ folder will go here -->
-        <!-- <img src="media/img1.jpg" alt="Project screenshot 1"> -->
-        <!-- <img src="media/img2.jpg" alt="Project screenshot 2"> -->
+    <div class="container">
+        <div class="header">
+            <a href="../" class="back-link">← Back</a>
+            <h1>Colorizing the Prokudin-Gorskii Collection</h1>
+            <div class="subtitle">Programming Project #1</div>
+            <div class="course">CS180: Intro to Computer Vision and Computational Photography</div>
+        </div>
+
+        <div class="content">
+            <!-- Overview Section -->
+            <div class="section">
+                <h2>Overview</h2>
+                <p>
+                    This project implements an algorithm to automatically colorize the digitized Prokudin-Gorskii glass plate images.
+                    The goal is to extract three color channel images, align them properly, and combine them into a single RGB color image
+                    with minimal visual artifacts.
+                </p>
+                <p>
+                    Sergei Mikhailovich Prokudin-Gorskii (1863-1944) was a pioneering photographer who captured the Russian Empire
+                    using red, green, and blue filters on glass plates, envisioning a future of color photography decades before
+                    it became practical.
+                </p>
+            </div>
+
+            <!-- Approach Section -->
+            <div class="section">
+                <h2>Approach</h2>
+                <h3>Single-Scale Alignment (Basic Cathedral, Monastery, Tobolsk Images)</h3>
+                <p>
+                    For simple alignment, we generate a matrix of shifts for x and y coordinates of the image. The algorithm
+                    moves through each possible displacement and checks the alignment of pixels using Normalized Cross-Correlation (NCC).
+                </p>
+
+                <p>
+                    NCC works like a dot product but normalizes the magnitudes of each image "vector". This means we're essentially
+                    comparing the "directions" of the image to measure alignment, which filters out factors that may affect magnitude
+                    such as rolling the image a certain number of pixels. We add a small constant (1E-12) to the denominator of the
+                    norms to prevent division by zero when one of the norms is 0.
+                </p>
+
+                <p>
+                    The algorithm goes through each combination of x and y shift, records the NCC score for each pair, then returns
+                    the argmax - the x and y shift that caused the highest normalized cross correlation. An important consideration
+                    is that we need to crop the image since shifting an uncropped image fundamentally changes the image itself,
+                    which could introduce confounding factors that influence the NCC.
+                </p>
+
+
+                <h3>Multi-Scale Pyramid Alignment (Higher Resolution Images)</h3>
+                <p>
+                    For higher resolution images, single-scale alignment doesn't work well. Using the same search margin
+                    (e.g., 25 pixels) represents a much smaller relative area on high-resolution images, meaning we may miss
+                    stronger displacements that require larger shifts.
+                </p>
+
+                <p>
+                    Instead, we use iterative processing with image pyramids. Each level in the pyramid is lower resolution
+                    (taking every other pixel to scale by 2). While this risks aliasing by folding higher frequencies into
+                    lower resolution slices, it works well in practice for relatively smooth images.
+                </p>
+
+                <p>
+                    This approach allows us to search far fewer pixels since each pixel in lower resolution images corresponds
+                    to many pixels in the full resolution image. We align the lower resolution images using the same method as
+                    single-scale alignment (using NCC) and record the pixel shift. Given this integer tuple of shifts, we scale it by 2
+                    (assuming scale factor of 2) - if we needed to move a 100x100 pixel image by 5 pixels, this corresponds to
+                    a 10 pixel shift in the 200x200 version.
+                </p>
+
+                <p>
+                    Using this "starting hint", we search for the best fit in a much smaller margin around the starting shift,
+                    then repeat this process to find increasingly precise alignments. This saves tremendous compute time: the
+                    original single alignment takes about 5 minutes per image, while pyramids take only ~15 seconds per image
+                    on GPU. We utilize this extra compute efficiency to search a much larger space (e.g., 64 pixel margin in
+                    the lowest resolution) to ensure we don't miss anything.
+                </p>
+
+            </div>
+
+            <!-- Single-Scale Results -->
+            <div class="section">
+                <h2>Single-Scale Alignment Results</h2>
+                <p>Results using single-scale alignment on low-resolution JPEG images:</p>
+
+                <div class="results-grid">
+                    <div class="result-item">
+                        <h4>Cathedral</h4>
+                        <img src="media/single-scale/cathedral.jpg_color_v2.jpg" alt="Cathedral aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: -336, dx: -388)<br>
+                            R shift: (dy: -329, dx: -387)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Monastery</h4>
+                        <img src="media/single-scale/monastery.jpg_color_v2.jpg" alt="Monastery aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: -344, dx: -389)<br>
+                            R shift: (dy: -338, dx: -389)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Tobolsk</h4>
+                        <img src="media/single-scale/tobolsk.jpg_color_v2.jpg" alt="Tobolsk aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: -338, dx: -393)<br>
+                            R shift: (dy: -335, dx: -393)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multi-Scale Results -->
+            <div class="section">
+                <h2>Multi-Scale Pyramid Results</h2>
+                <p>Results using pyramid alignment on all example images (both JPEG and TIFF):</p>
+
+                <div class="results-grid">
+                    <div class="result-item">
+                        <h4>Church</h4>
+                        <img src="media/pyramid/church.tif_color_v2.jpg" alt="Church aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 25, dx: 4)<br>
+                            R shift: (dy: 58, dx: -4)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Emir</h4>
+                        <img src="media/pyramid/emir.tif_color_v2.jpg" alt="Emir aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 49, dx: 24)<br>
+                            R shift: (dy: 156, dx: -1047) ⚠️
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Harvesters</h4>
+                        <img src="media/pyramid/harvesters.tif_color_v2.jpg" alt="Harvesters aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 60, dx: 17)<br>
+                            R shift: (dy: 124, dx: 14)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Icon</h4>
+                        <img src="media/pyramid/icon.tif_color_v2.jpg" alt="Icon aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 41, dx: 17)<br>
+                            R shift: (dy: 89, dx: 23)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Lugano</h4>
+                        <img src="media/pyramid/lugano.tif_color_v2.jpg" alt="Lugano aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 41, dx: -16)<br>
+                            R shift: (dy: 93, dx: -29)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Melons</h4>
+                        <img src="media/pyramid/melons.tif_color_v2.jpg" alt="Melons aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 82, dx: 11)<br>
+                            R shift: (dy: 178, dx: 13)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Self Portrait</h4>
+                        <img src="media/pyramid/self_portrait.tif_color_v2.jpg" alt="Self Portrait aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 79, dx: 29)<br>
+                            R shift: (dy: 176, dx: 36)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Three Generations</h4>
+                        <img src="media/pyramid/three_generations.tif_color_v2.jpg" alt="Three Generations aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 53, dx: 14)<br>
+                            R shift: (dy: 112, dx: 11)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Siren</h4>
+                        <img src="media/pyramid/siren.tif_color_v2.jpg" alt="Siren aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 49, dx: -6)<br>
+                            R shift: (dy: 96, dx: -25)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Italil</h4>
+                        <img src="media/pyramid/italil.tif_color_v2.jpg" alt="Italil aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 38, dx: 21)<br>
+                            R shift: (dy: 76, dx: 35)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Lastochikino</h4>
+                        <img src="media/pyramid/lastochikino.tif_color_v2.jpg" alt="Lastochikino aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: -3, dx: -2)<br>
+                            R shift: (dy: 75, dx: -9)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Own Images -->
+            <div class="section">
+                <h2>Additional Images from Collection</h2>
+                <p>Results on additional images downloaded from the Prokudin-Gorskii collection:</p>
+
+                <div class="results-grid">
+                    <div class="result-item">
+                        <h4>Mosque</h4>
+                        <img src="media/own-images/mosque.tif_color_v2.jpg" alt="Mosque aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 26, dx: 10)<br>
+                            R shift: (dy: 70, dx: 11)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Camel</h4>
+                        <img src="media/own-images/camel.tif_color_v2.jpg" alt="Camel aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 46, dx: -3)<br>
+                            R shift: (dy: 98, dx: -19)
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <h4>Trio</h4>
+                        <img src="media/own-images/trio.tif_color_v2.jpg" alt="Trio aligned image">
+                        <div class="offset-info">
+                            G shift: (dy: 47, dx: -13)<br>
+                            R shift: (dy: 85, dx: -42)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Failures Section -->
+            <div class="section">
+                <h2>Alignment Failures</h2>
+                <p>
+                    <strong>Failed Image:</strong> Emir<br>
+                    <strong>Reason:</strong> The Emir image failed due to significantly different brightness values across channels, making traditional pixel-based metrics ineffective. The large R shift value of -1047 indicates the algorithm couldn't find proper alignment.
+                </p>
+                <img src="media/pyramid/emir.tif_color_v2.jpg" alt="Emir failed alignment result" style="max-width: 400px; margin: 0 auto; display: block;">
+            </div>
+
+
+            <!-- Implementation Details -->
+            <div class="section">
+                <h2>Implementation Details</h2>
+                <h3>Key Design Decisions</h3>
+                <ul>
+                    <li><strong>Metric Choice:</strong> NCC with mean subtraction and 1e-12 epsilon to prevent division by zero</li>
+                    <li><strong>Pyramid Levels:</strong> Up to 6 levels, stopping when image dimensions < 64 pixels</li>
+                    <li><strong>Search Window:</strong> ±64 pixels at coarsest level, ±5 pixels for refinement</li>
+                    <li><strong>Border Handling:</strong> 10% crop fraction on all sides when computing NCC scores</li>
+                    <li><strong>Performance:</strong> GPU acceleration with CuPy when available, ~15 seconds per image</li>
+                </ul>
+
+                <h3>Challenges Overcome</h3>
+                <p>Implemented robust pyramid scaling with proper shift accumulation across levels. Used np.roll for efficient image shifting and handled edge cases where cropping removes all pixels.</p>
+            </div>
+        </div>
     </div>
-    
-    <h2>Technologies Used</h2>
-    <ul>
-        <li>Technology 1</li>
-        <li>Technology 2</li>
-        <li>Technology 3</li>
-    </ul>
-    
-    <h2>Links</h2>
-    <p>
-        <a href="#" target="_blank">Live Demo</a> | 
-        <a href="#" target="_blank">Source Code</a>
-    </p>
 </body>
 </html>
