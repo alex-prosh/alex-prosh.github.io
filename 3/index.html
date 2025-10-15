@@ -3,664 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS180 Project 2: Fun with Filters and Frequencies</title>
+    <title>Project 3A - Image Warping and Mosaicing</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        .container {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
             padding: 40px;
-            text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .header h1 {
-            margin: 0 0 10px 0;
-            font-size: 2.2rem;
-            font-weight: 400;
-        }
-
-        .header .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 5px;
-        }
-
-        .header .course {
-            font-size: 0.95rem;
-            opacity: 0.8;
-        }
-
-        .back-link {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: rgba(255,255,255,0.9);
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .content {
-            padding: 40px;
-        }
-
-        .section {
-            margin-bottom: 50px;
-        }
-
-        .section:last-child {
-            margin-bottom: 0;
-        }
-
-        .section h2 {
-            font-size: 1.8rem;
-            font-weight: 400;
-            margin-bottom: 20px;
-            color: #2c3e50;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-
-        .section h3 {
-            font-size: 1.3rem;
-            margin: 25px 0 15px 0;
-            color: #34495e;
-        }
-
-        .section p {
-            margin-bottom: 15px;
-            line-height: 1.7;
-        }
-
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 25px 0;
-        }
-
-        .image-grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin: 25px 0;
-        }
-
-        .image-grid-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-            margin: 25px 0;
-        }
-
-        .image-item {
-            text-align: center;
-        }
-
-        .image-item h4 {
-            margin: 10px 0;
-            color: #2c3e50;
-            font-size: 1rem;
-            font-weight: 400;
-        }
-
-        .image-item img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
+        h1 {
+            color: #003262;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #FDB515;
+            padding-bottom: 20px;
+        }
+        h2 {
+            color: #003262;
+            margin-top: 40px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #FDB515;
+        }
+        h3 {
+            color: #003262;
+            margin-top: 30px;
+        }
+        .section {
+            margin: 30px 0;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .image-container {
+            text-align: center;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .image-caption {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
         .placeholder {
             background: #e9ecef;
-            border: 2px dashed #adb5bd;
-            border-radius: 6px;
             padding: 60px 20px;
             text-align: center;
             color: #6c757d;
-            margin: 15px 0;
+            border-radius: 4px;
+            border: 2px dashed #adb5bd;
         }
-
-        .code-block {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 15px;
-            border-radius: 6px;
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
             font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            margin: 15px 0;
-            overflow-x: auto;
-            white-space: pre;
         }
-
-        @media (max-width: 768px) {
-            .image-grid-2,
-            .image-grid-3 {
-                grid-template-columns: 1fr;
-            }
-
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .content {
-                padding: 20px;
-            }
-
-            .header {
-                padding: 30px 20px;
-            }
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border-left: 4px solid #FDB515;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #003262;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <a href="../" class="back-link">← Back</a>
-            <h1>Fun with Filters and Frequencies</h1>
-            <div class="subtitle">Programming Project #2</div>
-            <div class="course">CS180: Intro to Computer Vision and Computational Photography</div>
+        <a href="../" class="back-link">← Back to Portfolio</a>
+
+        <h1>Project 3A: Image Warping and Mosaicing</h1>
+        <p style="text-align: center; color: #666;">CS180/280A: Intro to Computer Vision and Computational Photography</p>
+
+        <div class="section">
+            <h2>Overview</h2>
+            <p>
+                This project explores image warping and mosaicing techniques. The goal is to take two or more photographs
+                and create an image mosaic by registering, projective warping, resampling, and compositing them.
+                Along the way, I learn how to compute homographies and use them to warp images.
+            </p>
         </div>
 
-        <div class="content">
-            <!-- Overview Section -->
-            <div class="section">
-                <h2>Overview</h2>
-                <p>
-                    This project explores fundamental concepts in image processing through filters and frequency analysis.
-                    In Part 1, we build intuitions about 2D convolutions and edge detection using finite difference operators
-                    and Derivative of Gaussian filters. In Part 2, we dive into frequency-domain operations including image
-                    sharpening, hybrid images, and multi-resolution blending using Gaussian and Laplacian stacks.
-                </p>
-            </div>
+        <!-- Part A.1: Shoot the Pictures -->
+        <div class="section">
+            <h2>Part A.1: Shoot the Pictures (20 pts)</h2>
+            <p>
+                I captured multiple sets of photographs with projective transformations between them by fixing the center
+                of projection and rotating the camera while capturing photos.
+            </p>
 
-            <!-- Part 1: Filters -->
-            <div class="section">
-                <h2>Part 1: Fun with Filters</h2>
-
-                <h3>1.1 Convolutions from Scratch</h3>
-                <p>I implemented 2D convolution from scratch using nested loops to apply a 9x9 box filter kernel. The implementation handles boundaries by checking if pixel coordinates are within the image bounds before accumulating values (zero-padding approach). This means pixels at the boundary only use valid neighbors, which can result in darker edges.</p>
-
-                <div class="code-block">
-# Create 9x9 box filter kernel
-kernel = np.ones((9, 9), dtype=np.float32) / 81.0
-
-# Load and prepare image
-image_array = cv2.imread('Alex ID.jpg', cv2.IMREAD_GRAYSCALE)
-image_array = cv2.resize(image_array, (300, 300)).astype(np.float32)
-
-# Get dimensions
-image_height, image_width = image_array.shape
-kernel_height, kernel_width = kernel.shape
-pad_height = kernel_height // 2
-pad_width = kernel_width // 2
-
-# Initialize output
-output_image = np.zeros_like(image_array).astype(np.float32)
-
-# Perform convolution with nested loops
-for i in range(image_height):
-    for j in range(image_width):
-        for m in range(kernel_height):
-            for n in range(kernel_width):
-                # Calculate source pixel coordinates
-                image_row = i - pad_height + m
-                image_col = j - pad_width + n
-
-                # Zero-padding: only use pixels within bounds
-                if 0 <= image_row < image_height and 0 <= image_col < image_width:
-                    output_image[i, j] += image_array[image_row, image_col] * kernel[m, n]
-
-# Compare with scipy implementation
-from scipy.signal import convolve2d
-output_image2 = convolve2d(image_array, kernel, mode='same')
+            <h3>Image Set 1 - BAIR</h3>
+            <div class="image-grid">
+                <div class="image-container">
+                    <img src="media/part1/source/BAIR_left.jpg" alt="BAIR left view">
+                    <p class="image-caption">BAIR left view</p>
                 </div>
-
-                <p><strong>Comparison with scipy.signal.convolve2d:</strong></p>
-                <ul>
-                    <li><strong>Runtime:</strong> My implementation using nested Python loops is significantly slower (O(N²M²) where N is image size, M is kernel size) compared to scipy's optimized implementation which uses FFT-based convolution for larger kernels.</li>
-                    <li><strong>Boundary Handling:</strong> My implementation uses zero-padding (ignoring out-of-bounds pixels), while scipy's 'same' mode uses different boundary extension methods by default. This causes slight differences at image borders visible in the comparison images.</li>
-                </ul>
-
-                <div class="image-grid-2">
-                    <div class="image-item">
-                        <img src="media/part1/convolution/original_vs_self_made_box.png" alt="Original vs Box Filter">
-                        <h4>Original vs Custom Implementation</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part1/convolution/scipy_box.png" alt="Scipy Box Filter">
-                        <h4>Scipy Implementation</h4>
-                    </div>
-                </div>
-
-                <h3>1.2 Finite Difference Operator</h3>
-
-                <div class="image-item">
-                    <img src="media/part1/finite-diff/unblur_diff.png" alt="Finite Difference Results">
-                    <h4>Finite Difference Results</h4>
-                </div>
-
-                <p><strong>Threshold chosen:</strong> 35.0. This value strikes a balance between detecting meaningful edges and suppressing noise. A lower threshold would capture more edge detail but introduce significant noise from texture and minor intensity variations. A higher threshold would eliminate noise more effectively but miss important structural edges. At 35.0, we preserve the major contours and features while keeping the output relatively clean.</p>
-
-                <h3>1.3 Derivative of Gaussian (DoG) Filter</h3>
-
-                <div class="image-grid-2">
-                    <div class="image-item">
-                        <img src="media/part1/dog/kernels.png" alt="DoG Kernels">
-                        <h4>DoG Filter Kernels</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part1/dog/new_single_filter.png" alt="Single Convolution DoG">
-                        <h4>Single Convolution Result</h4>
-                    </div>
-                </div>
-                <div class="image-item">
-                    <img src="media/part1/dog/5_cameramen_pics.png" alt="DoG Results Comparison">
-                    <h4>Complete DoG Pipeline Results</h4>
-                </div>
-
-                <p><strong>Differences:</strong> The DoG filter produces significantly cleaner edge detection compared to the finite difference operator. By applying Gaussian smoothing before computing derivatives, the DoG approach effectively suppresses high-frequency noise while preserving meaningful edge information. This results in more continuous, well-defined contours of the person, camera, and other objects in the scene. The edges appear smoother and more coherent, making it easier to identify the overall structure and outlines of different elements in the image, whereas the finite difference approach produces more fragmented edges with visible noise artifacts.</p>
-            </div>
-
-            <!-- Part 2: Frequencies -->
-            <div class="section">
-                <h2>Part 2: Fun with Frequencies</h2>
-
-                <h3>2.1 Image Sharpening</h3>
-                <p>Image sharpening is achieved through the unsharp masking technique, which enhances edge detail by manipulating frequency components. The process works as follows: First, we apply a Gaussian low-pass filter to create a blurred version of the image, isolating the low frequencies. Next, we subtract this blurred image from the original to extract the high-frequency components (edges and fine details). Finally, we amplify these high frequencies by a factor α and add them back to the original image. This makes edges more pronounced and the image appear sharper. The formula is: sharpened = original + α × (original - blurred).</p>
-
-                <h4>Taj Mahal Sharpening</h4>
-                <div class="image-item">
-                    <img src="media/part2/sharpening/taj_low_and_high.png" alt="Taj Mahal Low and High Frequencies">
-                    <h4>Taj Mahal: Blurred, High-frequency, and Sharpened</h4>
-                </div>
-                <div class="image-item">
-                    <img src="media/part2/sharpening/taj_sharp_taj.png" alt="Taj Mahal Original vs Sharpened">
-                    <h4>Taj Mahal: Original vs Sharpened</h4>
-                </div>
-
-                <h4>Additional Example: Custom Image</h4>
-                <div class="image-item">
-                    <img src="media/part2/sharpening/me_vs_sharp_me.png" alt="Custom Image Sharpening">
-                    <h4>Blurred, High-frequency, and Sharpened</h4>
-                </div>
-
-                <h4>Varying Sharpening Amount</h4>
-                <div class="image-grid-3">
-                    <div class="image-item">
-                        <img src="media/part2/sharpening/me_less_sharp.png" alt="Less Sharpening">
-                        <h4>Lower Sharpening (α = 1)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/sharpening/me_vs_sharp_me.png" alt="Normal Sharpening">
-                        <h4>Normal Sharpening (α = 3)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/sharpening/me_more_sharp.png" alt="More Sharpening">
-                        <h4>Higher Sharpening (α = 7)</h4>
-                    </div>
-                </div>
-                <h3>2.2 Hybrid Images</h3>
-
-                <h4>Example 1: Smile + Frown</h4>
-                <div class="image-grid-3">
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/smile.png" alt="Smile">
-                        <h4>Smile (Original)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/frown.png" alt="Frown">
-                        <h4>Frown (Original)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/hybrid1.png" alt="Smile/Frown Hybrid">
-                        <h4>Hybrid Result (View from different distances!)</h4>
-                    </div>
-                </div>
-
-                <h4>Example 2: Pacino Hybrid (Young/Old) - Detailed Process</h4>
-                <p><strong>Cutoff Frequency:</strong> I used a Gaussian filter with σ = 5 for the low-pass filter. This preserves most of the low-frequency structure from the old Pacino image, ensuring it remains recognizable when viewed from a distance, while still allowing the high-frequency details from the young Pacino to be visible up close without overwhelming the low-frequency content.</p>
-
-                <h5>Original Images</h5>
-                <div class="image-grid-2">
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/young_original.png" alt="Young Pacino Original">
-                        <h4>Young Pacino (True Original)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/old_original.jpg" alt="Old Pacino Original">
-                        <h4>Old Pacino (True Original)</h4>
-                    </div>
-                </div>
-
-                <h5>Aligned Images for Processing</h5>
-                <div class="image-grid-3">
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/young.png" alt="Young Pacino Aligned">
-                        <h4>Young (Aligned)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/old.png" alt="Old Pacino Aligned">
-                        <h4>Old (Aligned)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/pacino_hybrid.png" alt="Pacino Hybrid">
-                        <h4>Hybrid Result</h4>
-                    </div>
-                </div>
-
-                <h5>Frequency Analysis</h5>
-                <div class="image-grid-2">
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/pacino_young_high_pass.png" alt="High-pass Filtered">
-                        <h4>High-pass Filtered (Young)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/pacino_old_low_pass.png" alt="Low-pass Filtered">
-                        <h4>Low-pass Filtered (Old)</h4>
-                    </div>
-                </div>
-
-                <h5>Log Magnitude Spectrum</h5>
-                <div class="image-grid-2">
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/log_plots/img1_Shifted_(log_magnitude_spectrum).png" alt="Young Shifted FFT">
-                        <h4>Young (Aligned) FFT</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/log_plots/img2_Shifted_(log_magnitude_spectrum).png" alt="Old Shifted FFT">
-                        <h4>Old (Aligned) FFT</h4>
-                    </div>
-                </div>
-                <div class="image-grid-2">
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/log_plots/img1_High_Pass_(log_magnitude_spectrum).png" alt="High-pass FFT">
-                        <h4>High-pass Filtered FFT (Young)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/log_plots/img2_Low_Pass_(log_magnitude_spectrum).png" alt="Low-pass FFT">
-                        <h4>Low-pass Filtered FFT (Old)</h4>
-                    </div>
-                </div>
-                <div class="image-item">
-                    <img src="media/part2/hybrid/log_plots/Hybrid_(log_magnitude_spectrum).png" alt="Hybrid FFT">
-                    <h4>Hybrid Image FFT</h4>
-                </div>
-
-                <h4>Example 3: Derek-Nutmeg Hybrid</h4>
-                <div class="image-grid-3">
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/DerekPicture.jpg" alt="Derek">
-                        <h4>Derek (Original)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/nutmeg.jpg" alt="Nutmeg">
-                        <h4>Nutmeg (Original)</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/hybrid/cat_man_hybrid.png" alt="Derek-Nutmeg Hybrid">
-                        <h4>Hybrid Result (View from different distances!)</h4>
-                    </div>
-                </div>
-
-                <h3>2.3 Gaussian and Laplacian Stacks</h3>
-
-                <h4>Apple Stack Visualization</h4>
-                <h5>Gaussian Stack</h5>
-                <div class="image-grid">
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/A_level_00.png" alt="Apple Gaussian 0">
-                        <h4>Level 0</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/A_level_01.png" alt="Apple Gaussian 1">
-                        <h4>Level 1</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/A_level_02.png" alt="Apple Gaussian 2">
-                        <h4>Level 2</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/A_level_03.png" alt="Apple Gaussian 3">
-                        <h4>Level 3</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/A_level_04.png" alt="Apple Gaussian 4">
-                        <h4>Level 4</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/A_level_05.png" alt="Apple Gaussian 5">
-                        <h4>Level 5</h4>
-                    </div>
-                </div>
-
-                <h5>Laplacian Stack</h5>
-                <div class="image-grid">
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Apple_Lap_vis_level_00.png" alt="Apple Laplacian 0">
-                        <h4>Level 0</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Apple_Lap_vis_level_01.png" alt="Apple Laplacian 1">
-                        <h4>Level 1</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Apple_Lap_vis_level_02.png" alt="Apple Laplacian 2">
-                        <h4>Level 2</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Apple_Lap_vis_level_03.png" alt="Apple Laplacian 3">
-                        <h4>Level 3</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Apple_Lap_vis_level_04.png" alt="Apple Laplacian 4">
-                        <h4>Level 4</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Apple_Lap_vis_level_05.png" alt="Apple Laplacian 5">
-                        <h4>Level 5</h4>
-                    </div>
-                </div>
-
-                <h4>Orange Stack Visualization</h4>
-                <h5>Gaussian Stack</h5>
-                <div class="image-grid">
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/B_level_00.png" alt="Orange Gaussian 0">
-                        <h4>Level 0</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/B_level_01.png" alt="Orange Gaussian 1">
-                        <h4>Level 1</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/B_level_02.png" alt="Orange Gaussian 2">
-                        <h4>Level 2</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/B_level_03.png" alt="Orange Gaussian 3">
-                        <h4>Level 3</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/B_level_04.png" alt="Orange Gaussian 4">
-                        <h4>Level 4</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/gaussian/B_level_05.png" alt="Orange Gaussian 5">
-                        <h4>Level 5</h4>
-                    </div>
-                </div>
-
-                <h5>Laplacian Stack</h5>
-                <div class="image-grid">
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Orange_Lap_vis_level_00.png" alt="Orange Laplacian 0">
-                        <h4>Level 0</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Orange_Lap_vis_level_01.png" alt="Orange Laplacian 1">
-                        <h4>Level 1</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Orange_Lap_vis_level_02.png" alt="Orange Laplacian 2">
-                        <h4>Level 2</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Orange_Lap_vis_level_03.png" alt="Orange Laplacian 3">
-                        <h4>Level 3</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Orange_Lap_vis_level_04.png" alt="Orange Laplacian 4">
-                        <h4>Level 4</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/stacks/laplacian_vis/Orange_Lap_vis_level_05.png" alt="Orange Laplacian 5">
-                        <h4>Level 5</h4>
-                    </div>
-                </div>
-
-                <h3>2.4 Multiresolution Blending (The Oraple!)</h3>
-
-                <h4>Oraple Result</h4>
-                <div class="image-grid-3">
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/A_input.png" alt="Apple">
-                        <h4>Apple</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/B_input.png" alt="Orange">
-                        <h4>Orange</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/result.png" alt="Oraple">
-                        <h4>Oraple</h4>
-                    </div>
-                </div>
-
-                <h4>Apple Laplacian Stack (Left Half)</h4>
-                <div class="image-grid">
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/laplacian_halves/HalfA_vis_level_00.png" alt="Apple Laplacian 0">
-                        <h4>Level 0</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/laplacian_halves/HalfA_vis_level_01.png" alt="Apple Laplacian 1">
-                        <h4>Level 1</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/laplacian_halves/HalfA_vis_level_02.png" alt="Apple Laplacian 2">
-                        <h4>Level 2</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/laplacian_halves/HalfA_vis_level_03.png" alt="Apple Laplacian 3">
-                        <h4>Level 3</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/laplacian_halves/HalfA_vis_level_04.png" alt="Apple Laplacian 4">
-                        <h4>Level 4</h4>
-                    </div>
-                </div>
-
-                <h4>Orange Laplacian Stack (Right Half)</h4>
-                <div class="image-grid">
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/laplacian_halves/HalfB_vis_level_00.png" alt="Orange Laplacian 0">
-                        <h4>Level 0</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/laplacian_halves/HalfB_vis_level_01.png" alt="Orange Laplacian 1">
-                        <h4>Level 1</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/laplacian_halves/HalfB_vis_level_02.png" alt="Orange Laplacian 2">
-                        <h4>Level 2</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/laplacian_halves/HalfB_vis_level_03.png" alt="Orange Laplacian 3">
-                        <h4>Level 3</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/laplacian_halves/HalfB_vis_level_04.png" alt="Orange Laplacian 4">
-                        <h4>Level 4</h4>
-                    </div>
-                </div>
-
-                <h4>Blending Process Visualization</h4>
-                <div class="image-grid">
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/misc/Blend_Lap_vis_level_00.png" alt="Blend Laplacian 0">
-                        <h4>Blended Laplacian Level 0</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/misc/Blend_Lap_vis_level_01.png" alt="Blend Laplacian 1">
-                        <h4>Blended Laplacian Level 1</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/misc/Blend_Lap_vis_level_02.png" alt="Blend Laplacian 2">
-                        <h4>Blended Laplacian Level 2</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/misc/Blend_Lap_vis_level_03.png" alt="Blend Laplacian 3">
-                        <h4>Blended Laplacian Level 3</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/misc/Blend_Lap_vis_level_04.png" alt="Blend Laplacian 4">
-                        <h4>Blended Laplacian Level 4</h4>
-                    </div>
-                </div>
-
-                <h4>Mask Visualization</h4>
-                <div class="image-grid-3">
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/masks/mask_base.png" alt="Base Mask">
-                        <h4>Base Mask</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/masks/M_level_00.png" alt="Mask Level 0">
-                        <h4>Mask Level 0</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/out/masks/M_level_02.png" alt="Mask Level 2">
-                        <h4>Mask Level 2</h4>
-                    </div>
-                </div>
-
-                <h4>Additional Examples</h4>
-                <div class="image-grid-2">
-                    <div class="image-item">
-                        <img src="media/part2/blending/forest_blended.png" alt="Forest Blended">
-                        <h4>Forest Multiresolution Blending</h4>
-                    </div>
-                    <div class="image-item">
-                        <img src="media/part2/blending/ear_wheel.png" alt="Ear Wheel Blended">
-                        <h4>Ear-Wheel Multiresolution Blending</h4>
-                    </div>
+                <div class="image-container">
+                    <img src="media/part1/source/BAIR_right.jpg" alt="BAIR right view">
+                    <p class="image-caption">BAIR right view</p>
                 </div>
             </div>
 
-            <!-- Reflection Section -->
-            <div class="section">
-                <h2>Most Important Thing Learned</h2>
-                <p><strong>Technical Insight:</strong> The most important technical concept I learned is that convolutions can be used to compute discrete derivatives. This fundamentally changed how I view CNNs. I now understand that CNNs are capable of learning to find derivatives and progressively higher-order derivatives as you go deeper into the network layers. This perspective helps explain why deeper layers can capture increasingly complex and abstract features in images.</p>
-                <p><strong>Project Management Lesson:</strong> The most valuable non-technical lesson I learned is the importance of creating a scaffold of all deliverables before diving into the actual project implementation. By first understanding exactly what needs to be produced, what images, visualizations, and results are required, I can write code that directly targets those specific outputs. This approach prevents wasted effort and ensures that all project requirements are met systematically.</p>
+            <h3>Image Set 2 - Bowles</h3>
+            <div class="image-grid">
+                <div class="image-container">
+                    <img src="media/part1/source/bowles_left.jpg" alt="Bowles left view">
+                    <p class="image-caption">Bowles left view</p>
+                </div>
+                <div class="image-container">
+                    <img src="media/part1/source/bowles_right.jpg" alt="Bowles right view">
+                    <p class="image-caption">Bowles right view</p>
+                </div>
             </div>
         </div>
+
+        <!-- Part A.2: Recover Homographies -->
+        <div class="section">
+            <h2>Part A.2: Recover Homographies (20 pts)</h2>
+            <p>
+                I implemented the <code>computeH(im1_pts, im2_pts)</code> function to recover homography matrices
+                from corresponding point pairs. The function sets up a system of linear equations and solves it
+                using least-squares to handle overdetermined systems.
+            </p>
+
+            <h3>Point Correspondences</h3>
+            <div class="image-container" style="margin: 20px 0;">
+                <img src="media/part1/source/bair_bowles_corr.png" alt="BAIR and Bowles correspondences">
+                <p class="image-caption">Point correspondences for BAIR (top) and Bowles (bottom) image pairs</p>
+            </div>
+
+            <h3>System of Equations</h3>
+            <p>The homography matrix H transforms points from one image to another:</p>
+            <pre>
+H = [A  B  C]       [X]     [X']
+    [D  E  F]   ×   [Y]  =  [Y']
+    [G  H  1]       [1]     [S ]
+            </pre>
+
+            <p>This gives us the projective transformation:</p>
+            <pre>
+AX + BY + C = X'
+DX + EY + F = Y'
+GX + HY + 1 = S
+
+Therefore:
+X' = (AX + BY + C) / (GX + HY + 1)
+Y' = (DX + EY + F) / (GX + HY + 1)
+            </pre>
+
+            <p>Rearranging to eliminate the division (multiplying both sides by the denominator):</p>
+            <pre>
+X'(GX + HY + 1) = (AX + BY + C)
+Y'(GX + HY + 1) = (DX + EY + F)
+
+Expanding:
+G(XX') + H(X'Y) + X' = AX + BY + C
+G(Y'X) + H(YY') + Y' = DX + EY + F
+
+Rearranging to equal zero:
+AX + BY + C - G(XX') - H(X'Y) - X' = 0
+-DX - EY - F + G(Y'X) + H(YY') + Y' = 0
+            </pre>
+
+            <p>For each correspondence point (X, Y) → (X', Y'), we get two equations.
+               We can express this in matrix form <strong>Ah = 0</strong>, where:</p>
+            <pre>
+h = [A, B, C, D, E, F, G, H, 1]<sup>T</sup>  (9 elements, 8 degrees of freedom)
+
+A = [X   Y   1   0   0   0   -XX'  -X'Y  -X' ]
+    [0   0   0   X   Y   1   -Y'X  -YY'  -Y' ]
+    </pre>
+
+            <p>With n correspondence points, we stack n such pairs of rows to form an overdetermined system (2n equations, 8 unknowns).
+               We solve this using <strong>least squares</strong>:</p>
+            <pre>
+Minimize ||Ah||² subject to ||h|| = 1
+
+This corresponds to finding the eigenvector with the smallest eigenvalue of A<sup>T</sup>A,
+which is equivalent to the right singular vector corresponding to the smallest
+singular value in the SVD of A (the rightmost column of V).
+            </pre>
+        </div>
+
+        <!-- Part A.3: Warp the Images -->
+        <div class="section">
+            <h2>Part A.3: Warp the Images (20 pts)</h2>
+            <p>
+                I implemented two interpolation methods from scratch:
+            </p>
+            <ul>
+                <li><code>warpImageNearestNeighbor(im, H)</code> - Rounds coordinates to nearest pixel</li>
+                <li><code>warpImageBilinear(im, H)</code> - Uses weighted average of four neighboring pixels</li>
+            </ul>
+            <p>Both functions use inverse warping to avoid holes in the output image.</p>
+
+            <h3>Rectification Examples</h3>
+            <div class="image-container" style="margin: 20px 0;">
+                <img src="media/part1/source/warp.png" alt="Rectification comparison">
+                <p class="image-caption">Top row: Tiles1 original, nearest neighbor, and bilinear interpolation<br>
+                Bottom row: Tiles2 original, nearest neighbor, and bilinear interpolation</p>
+            </div>
+
+            <h3>Comparison and Discussion</h3>
+            <div class="image-container" style="margin: 20px 0;">
+                <img src="media/part1/source/zoom.png" alt="Zoomed comparison of interpolation methods">
+                <p class="image-caption">Zoomed-in comparison showing interpolation differences</p>
+            </div>
+
+            <p>
+                The comparison between nearest neighbor and bilinear interpolation reveals important trade-offs:
+            </p>
+
+            <p>
+                <strong>Image Quality:</strong> Bilinear interpolation produces noticeably smoother results with more
+                natural-looking transitions between pixels. In contrast, nearest neighbor interpolation exhibits
+                significant aliasing artifacts, creating a "blocky" or "pixelated" appearance, especially visible
+                in the zoomed view above. This is because nearest neighbor simply copies the value of the closest
+                source pixel, while bilinear interpolation computes a weighted average of the four surrounding pixels,
+                creating smoother gradients.
+            </p>
+
+            <p>
+                <strong>Computational Speed:</strong> Nearest neighbor is computationally faster since it requires
+                only a single pixel lookup and rounding operation. Bilinear interpolation requires four pixel lookups
+                and weighted averaging calculations, making it roughly 4x slower. However, for most modern applications,
+                this speed difference is negligible compared to the quality improvement.
+            </p>
+
+            <p>
+                <strong>Edge Preservation:</strong> While nearest neighbor better preserves sharp edges (no blurring),
+                it introduces jagged "staircase" artifacts along diagonal lines. Bilinear interpolation smooths these
+                edges but can introduce slight blurring. For rectification tasks like ours, the smoother appearance
+                of bilinear interpolation is generally preferred over the harsh aliasing of nearest neighbor.
+            </p>
+        </div>
+
+        <!-- Part A.4: Blend the Images into a Mosaic -->
+        <div class="section">
+            <h2>Part A.4: Blend the Images into a Mosaic (20 pts)</h2>
+            <p>
+                I created image mosaics by warping images into alignment and blending them using weighted averaging
+                to reduce edge artifacts.
+            </p>
+
+            <h3>Mosaic 1 - BAIR</h3>
+            <div class="image-grid">
+                <div class="image-container">
+                    <img src="media/part1/source/BAIR_left.jpg" alt="BAIR left source">
+                    <p class="image-caption">BAIR left view</p>
+                </div>
+                <div class="image-container">
+                    <img src="media/part1/source/BAIR_right.jpg" alt="BAIR right source">
+                    <p class="image-caption">BAIR right view</p>
+                </div>
+            </div>
+            <div class="image-container" style="margin-top: 20px;">
+                <img src="media/part1/source/bair_mosaic.png" alt="BAIR mosaic result">
+                <p class="image-caption">BAIR mosaic - blended result</p>
+            </div>
+
+            <h3>Mosaic 2 - Bowles</h3>
+            <div class="image-grid">
+                <div class="image-container">
+                    <img src="media/part1/source/bowles_left.jpg" alt="Bowles left source">
+                    <p class="image-caption">Bowles left view</p>
+                </div>
+                <div class="image-container">
+                    <img src="media/part1/source/bowles_right.jpg" alt="Bowles right source">
+                    <p class="image-caption">Bowles right view</p>
+                </div>
+            </div>
+            <div class="image-container" style="margin-top: 20px;">
+                <img src="media/part1/source/bowles_mosaic.png" alt="Bowles mosaic result">
+                <p class="image-caption">Bowles mosaic - blended result</p>
+            </div>
+
+            <h3>Mosaic 3 - Room</h3>
+            <div class="image-grid">
+                <div class="image-container">
+                    <img src="media/part1/source/room_left.jpg" alt="Room left source">
+                    <p class="image-caption">Room left view</p>
+                </div>
+                <div class="image-container">
+                    <img src="media/part1/source/room_right.jpg" alt="Room right source">
+                    <p class="image-caption">Room right view</p>
+                </div>
+            </div>
+            <div class="image-container" style="margin-top: 20px;">
+                <img src="media/part1/source/room_mosaic.png" alt="Room mosaic result">
+                <p class="image-caption">Room mosaic - blended result</p>
+            </div>
+
+            <h3>Blending Procedure</h3>
+            <p>
+                To create seamless mosaics without visible seams, I implemented a <strong>linear feathering</strong>
+                technique using alpha channel blending with a configurable blend width of 150 pixels.
+            </p>
+
+            <p>
+                <strong>Algorithm Overview:</strong>
+            </p>
+            <ol>
+                <li>
+                    <strong>Warp the left image:</strong> First, I warp the left image using the computed homography
+                    with bilinear interpolation to align it with the right image. Both images are placed on a canvas
+                    large enough to hold both.
+                </li>
+                <li>
+                    <strong>Create alpha masks:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>
+                            <strong>Left image alpha:</strong> For each row, I identify the rightmost non-black pixel
+                            of the warped left image. The alpha value is set to 1.0 throughout most of the image,
+                            then linearly fades from 1.0 to 0.0 over the rightmost 150 pixels. This creates a smooth
+                            transition zone on the right edge where the images overlap.
+                        </li>
+                        <li>
+                            <strong>Right image alpha:</strong> The alpha mask starts at 0.0 on the leftmost edge
+                            and linearly increases to 1.0 over the first 150 pixels, remaining at 1.0 for the rest
+                            of the image. This complements the left image's fade.
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Conclusion -->
+        <div class="section">
+            <h2>What I Learned</h2>
+            <p>
+                This project taught me valuable lessons about approaching mathematical computer vision problems
+                effectively. The most important insight was the critical importance of <strong>starting on paper</strong>
+                before diving into code. Taking the time to fully understand the mathematical foundations (deriving
+                the homography equations, understanding how the projective transformation works, and working through
+                the linear algebra by hand) made the implementation phase significantly smoother and more intuitive.
+            </p>
+            <p>
+                During implementation, I discovered that adopting a <strong>highly iterative development style with
+                short feedback cycles</strong> was essential for success. Rather than writing large blocks of code
+                and hoping they would work, I broke the project into small, testable components: first computing
+                homographies on simple test cases, then implementing and verifying nearest neighbor interpolation
+                before moving to bilinear, and finally tackling the blending incrementally. This iterative approach
+                allowed me to catch bugs early, validate intermediate results visually, and build confidence that
+                each component was working correctly before moving forward. The ability to quickly test, debug, and
+                refine made what could have been a frustrating debugging nightmare into a manageable and even
+                enjoyable learning experience.
+            </p>
+        </div>
+
+        <footer style="text-align: center; margin-top: 40px; color: #666; border-top: 1px solid #eee; padding-top: 20px;">
+            <p>CS180/280A - Project 3A: Image Warping and Mosaicing</p>
+        </footer>
     </div>
 </body>
 </html>
