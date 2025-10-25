@@ -356,6 +356,156 @@ singular value in the SVD of A (the rightmost column of V).
             </ol>
         </div>
 
+        <!-- Project 3B: Automatic Stitching Pipeline -->
+        <div class="section">
+            <h2>Project 3B: Automatic Feature Matching and Mosaicing</h2>
+            <p>
+                This follow-up extends the mosaicing pipeline with fully automatic feature detection,
+                matching, and robust alignment inspired by Brown et al.'s “Multi-Image Matching using
+                Multi-Scale Oriented Patches.” The plan below tracks implementation progress and
+                highlights the figures that will appear as each stage is completed.
+            </p>
+
+            <h3>B.1: Harris Corner Detection (20 pts)</h3>
+            <p>
+                Revisit the Harris Interest Point Detector at a single scale, then integrate Adaptive
+                Non-Maximal Suppression (ANMS) to retain spatially distributed keypoints. Results will be
+                visualized by overlaying detected corners before and after ANMS on representative images.
+            </p>
+            <div class="image-container">
+                <img src="media/part1/source/all_harris.png" alt="Harris response and detected corners">
+                <p class="image-caption">
+                    Harris detector output showing response heatmap (left) and the initial pool of interest points (right) prior to ranking.
+                </p>
+            </div>
+            <p>
+                To highlight why ANMS matters, both figures below keep the top <code>K = 30</code> corners. Raw Harris scoring
+                clusters points wherever texture is dense, whereas ANMS spreads responses across the scene.
+            </p>
+            <p><strong>Deliverables:</strong></p>
+            <ul>
+                <li>Figure: Harris corners overlaid on the source image</li>
+                <li>Figure: Corners selected via ANMS overlaid on the same image</li>
+            </ul>
+            <div class="image-grid">
+                <div class="image-container">
+                    <img src="media/part1/source/strongest_harris_corners.png" alt="Top K Harris corners by score">
+                    <p class="image-caption">
+                        Top <code>K = 30</code> corners chosen purely by Harris response cluster heavily in textured regions.
+                    </p>
+                </div>
+                <div class="image-container">
+                    <img src="media/part1/source/anms_corners.png" alt="Corners retained after ANMS">
+                    <p class="image-caption">
+                        ANMS with <code>K = 30</code> enforces spatial separation, keeping points from collapsing onto the same area.
+                    </p>
+                </div>
+            </div>
+
+            <h3>B.2: Feature Descriptor Extraction (20 pts)</h3>
+            <p>
+                For each surviving feature, extract an axis-aligned 8×8 descriptor sampled from a blurred
+                40×40 window, followed by bias/gain normalization. Several representative patches will be
+                documented to illustrate descriptor appearance.
+            </p>
+            <div class="image-container">
+                <img src="media/part1/source/8x8patches.png" alt="Sample normalized 8x8 feature descriptors">
+                <p class="image-caption">
+                    Six normalized 8×8 descriptors sampled from 40×40 windows; values are visualized as intensity grids after bias/gain normalization.
+                </p>
+            </div>
+            <p><strong>Deliverables:</strong></p>
+            <ul>
+                <li>Implementation notes on descriptor construction and normalization</li>
+                <li>Figure set: Sample feature patches visualized as heatmaps or enlarged grids</li>
+            </ul>
+
+            <h3>B.3: Feature Matching (20 pts)</h3>
+            <p>
+                Implement nearest-neighbor matching with Lowe’s ratio test to prune ambiguous correspondences.
+                Visualizations will emphasize confident match pairs across image pairs used in the mosaics.
+            </p>
+            <div class="image-container">
+                <img src="media/part1/source/all_features.png" alt="Feature matches filtered with Lowe ratio test">
+                <p class="image-caption">
+                    Lowe ratio test matches between a representative image pair; colored lines connect descriptors that passed the ratio threshold.
+                </p>
+            </div>
+            <p><strong>Deliverables:</strong></p>
+            <ul>
+                <li>Figure: Matched features between each image pair after ratio test filtering</li>
+            </ul>
+
+            <h3>B.4: RANSAC for Robust Homography (40 pts)</h3>
+            <p>
+                Use 4-point RANSAC to estimate homographies robustly, then autostitch mosaics that can be
+                compared directly with the manually aligned results from Part A. At least three scenes will
+                be presented side by side (manual vs. automatic).
+            </p>
+            <p>
+                I implemented a minimal 4-point RANSAC loop that repeatedly samples correspondences, solves for the
+                homography via DLT, and scores inliers with a 2-pixel reprojection threshold. The best homography then
+                feeds back into the Part A warping/blending code to generate fully automatic mosaics. Below each scene
+                shows the manually aligned reference mosaic next to the automatic result.
+            </p>
+            <div class="image-grid">
+                <div class="image-container">
+                    <img src="media/part1/source/bair_mosaic.png" alt="BAIR manual mosaic">
+                    <p class="image-caption">
+                        BAIR manual mosaic (hand-picked correspondences, weighted feather blend).
+                    </p>
+                </div>
+                <div class="image-container">
+                    <img src="media/part1/source/bair_auto.png" alt="BAIR automatic mosaic">
+                    <p class="image-caption">
+                        BAIR automatic mosaic using Harris+ANMS, descriptors, Lowe matching, and 4-point RANSAC.
+                    </p>
+                </div>
+            </div>
+            <p class="image-caption" style="text-align:center;margin-top:-10px;">
+                Automatic alignment smooths the skyline/roof transition and removes the slight waviness the manual blend left in the city façade and sky.
+            </p>
+            <div class="image-grid">
+                <div class="image-container">
+                    <img src="media/part1/source/bowles_mosaic.png" alt="Bowles manual mosaic">
+                    <p class="image-caption">
+                        Bowles manual mosaic assembled with interactive correspondences.
+                    </p>
+                </div>
+                <div class="image-container">
+                    <img src="media/part1/source/bowles_auto.png" alt="Bowles automatic mosaic">
+                    <p class="image-caption">
+                        Bowles automatic mosaic computed from feature matches and RANSAC-estimated homography.
+                    </p>
+                </div>
+            </div>
+            <p class="image-caption" style="text-align:center;margin-top:-10px;">
+                The automatic mosaic noticeably reduces jitter along the tree canopy overlap where manual correspondences struggled.
+            </p>
+            <div class="image-grid">
+                <div class="image-container">
+                    <img src="media/part1/source/room_mosaic.png" alt="Room manual mosaic">
+                    <p class="image-caption">
+                        Room manual mosaic baseline from Part A.
+                    </p>
+                </div>
+                <div class="image-container">
+                    <img src="media/part1/source/room_auto.png" alt="Room automatic mosaic">
+                    <p class="image-caption">
+                        Room automatic mosaic showcasing the end-to-end pipeline on a challenging indoor scene.
+                    </p>
+                </div>
+            </div>
+            <p class="image-caption" style="text-align:center;margin-top:-10px;">
+                Automatic stitching reveals remaining weaknesses: verticals inherit a slight curvature and the cup picks up small jitter compared to the manual reference.
+            </p>
+            <p><strong>Deliverables:</strong></p>
+            <ul>
+                <li>Implementation summary of the 4-point RANSAC loop and stopping criteria</li>
+                <li>Figure sets: Manual mosaics adjacent to automatic mosaics for ≥3 scenes</li>
+            </ul>
+        </div>
+
         <!-- Conclusion -->
         <div class="section">
             <h2>What I Learned</h2>
@@ -380,7 +530,7 @@ singular value in the SVD of A (the rightmost column of V).
         </div>
 
         <footer style="text-align: center; margin-top: 40px; color: #666; border-top: 1px solid #eee; padding-top: 20px;">
-            <p>CS180/280A - Project 3A: Image Warping and Mosaicing</p>
+            <p>CS180/280A - Projects 3A &amp; 3B: Image Warping, Feature Matching, and Mosaicing</p>
         </footer>
     </div>
 </body>
