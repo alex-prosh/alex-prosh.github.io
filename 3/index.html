@@ -362,15 +362,15 @@ singular value in the SVD of A (the rightmost column of V).
             <p>
                 This follow-up extends the mosaicing pipeline with fully automatic feature detection,
                 matching, and robust alignment inspired by Brown et al.'s “Multi-Image Matching using
-                Multi-Scale Oriented Patches.” The plan below tracks implementation progress and
-                highlights the figures that will appear as each stage is completed.
+                Multi-Scale Oriented Patches.” Each subsection documents the implementation decisions and
+                the resulting visual evidence from the finished pipeline.
             </p>
 
             <h3>B.1: Harris Corner Detection (20 pts)</h3>
             <p>
-                Revisit the Harris Interest Point Detector at a single scale, then integrate Adaptive
-                Non-Maximal Suppression (ANMS) to retain spatially distributed keypoints. Results will be
-                visualized by overlaying detected corners before and after ANMS on representative images.
+                I revisited the Harris Interest Point Detector at a single scale and paired it with Adaptive
+                Non-Maximal Suppression (ANMS) to retain spatially distributed keypoints. The figure below
+                shows the Harris response heatmap and all candidate corners before ranking.
             </p>
             <div class="image-container">
                 <img src="media/part1/source/all_harris.png" alt="Harris response and detected corners">
@@ -382,11 +382,6 @@ singular value in the SVD of A (the rightmost column of V).
                 To highlight why ANMS matters, both figures below keep the top <code>K = 30</code> corners. Raw Harris scoring
                 clusters points wherever texture is dense, whereas ANMS spreads responses across the scene.
             </p>
-            <p><strong>Deliverables:</strong></p>
-            <ul>
-                <li>Figure: Harris corners overlaid on the source image</li>
-                <li>Figure: Corners selected via ANMS overlaid on the same image</li>
-            </ul>
             <div class="image-grid">
                 <div class="image-container">
                     <img src="media/part1/source/strongest_harris_corners.png" alt="Top K Harris corners by score">
@@ -404,9 +399,9 @@ singular value in the SVD of A (the rightmost column of V).
 
             <h3>B.2: Feature Descriptor Extraction (20 pts)</h3>
             <p>
-                For each surviving feature, extract an axis-aligned 8×8 descriptor sampled from a blurred
-                40×40 window, followed by bias/gain normalization. Several representative patches will be
-                documented to illustrate descriptor appearance.
+                For each surviving feature, I extract an axis-aligned 8×8 descriptor sampled from a blurred
+                40×40 window, followed by bias/gain normalization so descriptors become illumination invariant.
+                The gallery highlights six representative patches visualized as intensity grids.
             </p>
             <div class="image-container">
                 <img src="media/part1/source/8x8patches.png" alt="Sample normalized 8x8 feature descriptors">
@@ -414,16 +409,12 @@ singular value in the SVD of A (the rightmost column of V).
                     Six normalized 8×8 descriptors sampled from 40×40 windows; values are visualized as intensity grids after bias/gain normalization.
                 </p>
             </div>
-            <p><strong>Deliverables:</strong></p>
-            <ul>
-                <li>Implementation notes on descriptor construction and normalization</li>
-                <li>Figure set: Sample feature patches visualized as heatmaps or enlarged grids</li>
-            </ul>
 
             <h3>B.3: Feature Matching (20 pts)</h3>
             <p>
-                Implement nearest-neighbor matching with Lowe’s ratio test to prune ambiguous correspondences.
-                Visualizations will emphasize confident match pairs across image pairs used in the mosaics.
+                Descriptor vectors are matched via nearest neighbors in Euclidean space, and Lowe’s ratio test
+                prunes ambiguous correspondences before anything reaches RANSAC. The surviving matches, shown below,
+                already form coherent geometric structures across scenes.
             </p>
             <div class="image-container">
                 <img src="media/part1/source/all_features.png" alt="Feature matches filtered with Lowe ratio test">
@@ -431,16 +422,12 @@ singular value in the SVD of A (the rightmost column of V).
                     Lowe ratio test matches between a representative image pair; colored lines connect descriptors that passed the ratio threshold.
                 </p>
             </div>
-            <p><strong>Deliverables:</strong></p>
-            <ul>
-                <li>Figure: Matched features between each image pair after ratio test filtering</li>
-            </ul>
 
             <h3>B.4: RANSAC for Robust Homography (40 pts)</h3>
             <p>
-                Use 4-point RANSAC to estimate homographies robustly, then autostitch mosaics that can be
-                compared directly with the manually aligned results from Part A. At least three scenes will
-                be presented side by side (manual vs. automatic).
+                A 4-point RANSAC loop robustly estimates homographies from the filtered matches and feeds them into
+                the existing warping/blending pipeline, enabling fully automatic mosaics that can be compared directly
+                with the manually aligned results from Part A.
             </p>
             <p>
                 I implemented a minimal 4-point RANSAC loop that repeatedly samples correspondences, solves for the
@@ -499,11 +486,6 @@ singular value in the SVD of A (the rightmost column of V).
             <p class="image-caption" style="text-align:center;margin-top:-10px;">
                 Automatic stitching reveals remaining weaknesses: verticals inherit a slight curvature and the cup picks up small jitter compared to the manual reference.
             </p>
-            <p><strong>Deliverables:</strong></p>
-            <ul>
-                <li>Implementation summary of the 4-point RANSAC loop and stopping criteria</li>
-                <li>Figure sets: Manual mosaics adjacent to automatic mosaics for ≥3 scenes</li>
-            </ul>
         </div>
 
         <!-- Conclusion -->
